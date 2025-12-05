@@ -6,40 +6,40 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-count:
+  update:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout profile repo (main)
-        uses: actions/checkout@v3
-        with:
-          repository: vikasvooradi/vikasvooradi
-          path: profile
-          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Checkout solution repo
+      # Checkout profile repo (this repo)
+      - name: Checkout profile repo
+        uses: actions/checkout@v3
+
+      # Checkout leetcode-oracle repo in separate folder
+      - name: Checkout Oracle solutions repo
         uses: actions/checkout@v3
         with:
           repository: vikasvooradi/leetcode-oracle
-          path: solutions
+          path: oracle_repo
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Count Oracle problems
+      # Count solution files
+      - name: Count Oracle solutions
         id: count
         run: |
-          COUNT=$(find solutions -type f \( -name "*.sql" -o -name "*.md" -o -name "*.txt" \) | wc -l)
+          COUNT=$(find oracle_repo -type f \( -name "*.sql" -o -name "*.md" -o -name "*.txt" \) | wc -l)
           echo "count=$COUNT" >> $GITHUB_OUTPUT
 
-      - name: Update README in profile repo
+      # Update README
+      - name: Update README
         run: |
-          cd profile
           sed -i "s/<!--COUNT_START-->.*<!--COUNT_END-->/<!--COUNT_START-->${{ steps.count.outputs.count }}<!--COUNT_END-->/" README.md
 
-      - name: Commit and push changes
+      # Commit + push
+      - name: Commit and push
         run: |
-          cd profile
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
           git add README.md
-          git commit -m "Auto-update Oracle solved count" || echo "No changes to commit"
+          git commit -m "Update Oracle solved count" || echo "No changes"
           git push
