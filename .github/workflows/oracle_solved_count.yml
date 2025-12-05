@@ -13,12 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
-      # Checkout profile repo (this repo)
+      # Checkout profile repo
       - name: Checkout profile repo
         uses: actions/checkout@v3
 
-      # Checkout leetcode-oracle repo in separate folder
+      # Checkout leetcode-oracle repo in subfolder
       - name: Checkout Oracle solutions repo
         uses: actions/checkout@v3
         with:
@@ -26,23 +25,28 @@ jobs:
           path: oracle_repo
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Count solution files
+      # Count unique problem folders (correct count)
       - name: Count Oracle solutions
         id: count
         run: |
-          COUNT=$(find oracle_repo -type f \( -name "*.sql" -o -name "*.md" -o -name "*.txt" \) | wc -l)
+          # Find directories that contain at least one .sql file
+          COUNT=$(find oracle_repo -type f -name '*.sql' -print0 \
+            | xargs -0 -n1 dirname \
+            | sort -u \
+            | wc -l)
+
           echo "count=$COUNT" >> $GITHUB_OUTPUT
 
-      # Update README
+      # Update the README in your profile repo
       - name: Update README
         run: |
           sed -i "s/<!--COUNT_START-->.*<!--COUNT_END-->/<!--COUNT_START-->${{ steps.count.outputs.count }}<!--COUNT_END-->/" README.md
 
-      # Commit + push
+      # Commit & push changes
       - name: Commit and push
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           git add README.md
-          git commit -m "Update Oracle solved count" || echo "No changes"
+          git commit -m "Auto-update Oracle solved count" || echo "No changes"
           git push
