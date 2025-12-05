@@ -2,7 +2,7 @@ name: Update Oracle Solved Count
 
 on:
   schedule:
-    - cron: "0 */6 * * *"   # updates every 6 hours
+    - cron: "0 */6 * * *"
   workflow_dispatch:
 
 jobs:
@@ -10,34 +10,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout profile repo
+      - name: Checkout profile repo (main)
         uses: actions/checkout@v3
         with:
           repository: vikasvooradi/vikasvooradi
+          path: profile
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Checkout leetcode-oracle repo
+      - name: Checkout solution repo
         uses: actions/checkout@v3
         with:
           repository: vikasvooradi/leetcode-oracle
+          path: solutions
           token: ${{ secrets.GITHUB_TOKEN }}
-          path: leetcode-oracle
 
-      - name: Count Oracle solutions
+      - name: Count Oracle problems
         id: count
         run: |
-          COUNT=$(find leetcode-oracle -type f \( -name "*.sql" -o -name "*.txt" -o -name "*.md" \) | wc -l)
+          COUNT=$(find solutions -type f \( -name "*.sql" -o -name "*.md" -o -name "*.txt" \) | wc -l)
           echo "count=$COUNT" >> $GITHUB_OUTPUT
 
-      - name: Update README
+      - name: Update README in profile repo
         run: |
-          cd $GITHUB_WORKSPACE
+          cd profile
           sed -i "s/<!--COUNT_START-->.*<!--COUNT_END-->/<!--COUNT_START-->${{ steps.count.outputs.count }}<!--COUNT_END-->/" README.md
 
-      - name: Commit changes
+      - name: Commit and push changes
         run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
+          cd profile
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
           git add README.md
-          git commit -m "Update Oracle solved count" || echo "No changes"
+          git commit -m "Auto-update Oracle solved count" || echo "No changes to commit"
           git push
