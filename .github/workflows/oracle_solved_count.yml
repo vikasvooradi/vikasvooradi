@@ -1,0 +1,43 @@
+name: Update Oracle Solved Count
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"   # updates every 6 hours
+  workflow_dispatch:
+
+jobs:
+  update-count:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout profile repo
+        uses: actions/checkout@v3
+        with:
+          repository: vikasvooradi/vikasvooradi
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout leetcode-oracle repo
+        uses: actions/checkout@v3
+        with:
+          repository: vikasvooradi/leetcode-oracle
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: leetcode-oracle
+
+      - name: Count Oracle solutions
+        id: count
+        run: |
+          COUNT=$(find leetcode-oracle -type f \( -name "*.sql" -o -name "*.txt" -o -name "*.md" \) | wc -l)
+          echo "count=$COUNT" >> $GITHUB_OUTPUT
+
+      - name: Update README
+        run: |
+          cd $GITHUB_WORKSPACE
+          sed -i "s/<!--COUNT_START-->.*<!--COUNT_END-->/<!--COUNT_START-->${{ steps.count.outputs.count }}<!--COUNT_END-->/" README.md
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add README.md
+          git commit -m "Update Oracle solved count" || echo "No changes"
+          git push
