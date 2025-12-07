@@ -1,52 +1,45 @@
 name: Update Oracle Solved Count
-
 permissions:
   contents: write
-
 on:
   schedule:
     - cron: "0 */6 * * *"
   workflow_dispatch:
-
 jobs:
   update:
     runs-on: ubuntu-latest
-
     steps:
-      # Checkout profile repo
-      - name: Checkout profile repo
-        uses: actions/checkout@v3
-
-      # Checkout leetcode-oracle repo in subfolder
-      - name: Checkout Oracle solutions repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      
+      - name: Checkout leetcode-oracle repo
+        uses: actions/checkout@v4
         with:
           repository: vikasvooradi/leetcode-oracle
           path: oracle_repo
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      # Count unique problem folders (correct count)
-      - name: Count Oracle solutions
+          ref: main
+      
+      - name: Count unique SQL problem folders
         id: count
         run: |
-          # Find directories that contain at least one .sql file
-          COUNT=$(find oracle_repo -type f -name '*.sql' -print0 \
-            | xargs -0 -n1 dirname \
-            | sort -u \
-            | wc -l)
-
+          COUNT=$(find oracle_repo -mindepth 2 -type f -name '*.sql' -print0 | \
+                  xargs -0 -n1 dirname | \
+                  sort -u | \
+                  wc -l)
           echo "count=$COUNT" >> $GITHUB_OUTPUT
-
-      # Update the README in your profile repo
-      - name: Update README
+      
+      - name: Update README badge
         run: |
-          sed -i "s/<!--COUNT_START-->.*<!--COUNT_END-->/<!--COUNT_START-->${{ steps.count.outputs.count }}<!--COUNT_END-->/" README.md
-
-      # Commit & push changes
-      - name: Commit and push
+          sed -i "s|<!--COUNT_START-->.*<!--COUNT_END-->|<!--COUNT_START-->${{ steps.count.outputs.count }}<!--COUNT_END-->|g" README.md
+      
+      - name: Commit if changed
         run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
           git add README.md
-          git commit -m "Auto-update Oracle solved count" || echo "No changes"
+          if git diff --staged --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "Update Oracle SQL solved: ${{ steps.count.outputs.count }}"
           git push
