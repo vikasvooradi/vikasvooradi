@@ -1,8 +1,6 @@
 ## Hi there 👋
 # I'm Vikas Bhaskar Vooradi
 A simple, curious, and continuous learner who believes that growth comes from consistent effort, honest curiosity, and the desire to improve a little more each day.
-
-<br>
 <!-- Leetcode : Dashboard for SQL -->
 <br>
 <div align="left">
@@ -23,6 +21,7 @@ A simple, curious, and continuous learner who believes that growth comes from co
   [![vikasvooradi LeetCode Stats](https://leetcard.jacoblin.cool/vikasvooradi?theme=dark&border=0&radius=14&font=Inter)](https://leetcode.com/vikasvooradi/)
   <br><br>
   <!-- Oracle SQL Badge -->
-  <img src="https://img.shields.io/badge/ORACLE%20SQL-<!--COUNT_START-->18<!--COUNT_END-->%20SOLVED-FF6B35?style=for-the-badge&logo=oracle&logoColor=white&labelColor=000000" />
+  ![Oracle SQL](https://img.shields.io/badge/ORACLE%20SQL-18%20SOLVED-FF6B35?style=for-the-badge&logo=oracle&logoColor=white&labelColor=000000)
+  <!-- COUNT:18 -->
   </div>
 </div>
