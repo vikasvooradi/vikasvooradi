@@ -25,3 +25,6 @@ A simple, curious, and continuous learner who believes that growth comes from co
   <!-- COUNT:22 -->
   </div>
 </div>
+
+### GitHub Stats
+<img src="https://github-readme-streak-stats.herokuapp.com/?user=vikasvooradi&theme=default" alt="GitHub Streak" />
