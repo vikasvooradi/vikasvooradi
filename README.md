@@ -27,7 +27,7 @@ A simple, curious, and continuous learner who believes that growth comes from co
 
   <!-- Oracle SQL Badge -->
   <img src="https://img.shields.io/badge/ORACLE%20SQL-18%20SOLVED-FF6B35?style=for-the-badge&logo=oracle&logoColor=white&labelColor=000000" />
-  <img src="https://img.shields.io/badge/ORACLE%20SQL-<!--COUNT_START-->21<!--COUNT_END-->%20SOLVED-FF6B35?style=for-the-badge&logo=oracle&logoColor=white&labelColor=000000" />
+  <img src="https://img.shields.io/badge/ORACLE%20SQL-<!--COUNT_START-->22<!--COUNT_END-->%20SOLVED-FF6B35?style=for-the-badge&logo=oracle&logoColor=white&labelColor=000000" />
   
   </div>
   
